@@ -108,6 +108,19 @@ public class ForwardedHeaderFilterTests {
 		assertEquals("", actual.getContextPath());
 		assertEquals("/path/", actual.getRequestURI());
 	}
+	
+	@Test
+	public void requestUriPreserveEncoding() throws Exception {
+		this.request.addHeader(X_FORWARDED_PREFIX, "/");
+		this.request.setContextPath("/app");
+		this.request.setRequestURI("/app/path%20with%20spaces/");
+		HttpServletRequest actual = filterAndGetWrappedRequest();
+
+		assertEquals("", actual.getContextPath());
+		assertEquals("/path%20with%20spaces/", actual.getRequestURI());
+		assertEquals("http://localhost/path%2520with%2520spaces/", actual.getRequestURL().toString());
+	}	
+	
 	@Test
 	public void requestUriEqualsContextPath() throws Exception {
 		this.request.addHeader(X_FORWARDED_PREFIX, "/");
