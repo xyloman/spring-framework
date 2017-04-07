@@ -136,9 +136,10 @@ public class ForwardedHeaderFilter extends OncePerRequestFilter {
 
 			String prefix = getForwardedPrefix(request);
 			this.contextPath = (prefix != null ? prefix : request.getContextPath());
-			this.requestUri = this.contextPath + pathHelper.getPathWithinApplication(request);
-			this.requestUrl = new StringBuffer(this.scheme + "://" + this.host +
-					(port == -1 ? "" : ":" + port) + this.requestUri);
+			this.requestUri = UriComponentsBuilder.fromPath(this.contextPath)
+					.path(pathHelper.getPathWithinApplication(request)).toUriString();
+			this.requestUrl =  new StringBuffer(UriComponentsBuilder.fromPath(this.requestUri).host(this.host)
+					.scheme(this.scheme).port(port).toUriString());
 			this.headers = initHeaders(request);
 		}
 
